@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avenza Bookings — Visual Architecture Canvas & Plan</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons & Mermaid.js -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #060913;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --bg-card-hover: rgba(30, 41, 59, 0.85);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-pink: #ec4899;
+      --text-bright: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-bright);
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 90% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.12) 0%, transparent 45%);
+      background-attachment: fixed;
+      padding-bottom: 5rem;
+    }
+
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    /* Header & Hero Badge */
+    .hero {
+      text-align: center;
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #c084fc;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 40%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-dim);
+      max-width: 840px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Metric Cards Grid */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-card);
+      border-radius: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-indigo), var(--accent-purple));
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 12px 30px rgba(99, 102, 241, 0.2);
+    }
+
+    .metric-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+
+    .metric-lbl {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Canvas Sections */
+    .canvas-section {
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .section-title i {
+      color: var(--accent-indigo);
+      width: 32px;
+      height: 32px;
+    }
+
+    .section-title h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .section-title span {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-left: auto;
+    }
+
+    /* Glass Container */
+    .glass-box {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-card);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Visual Grid Layouts */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1.75rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+
+    /* Entity Cards (DocTypes Visual) */
+    .entity-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .entity-card:hover {
+      border-color: rgba(168, 85, 247, 0.4);
+      box-shadow: 0 10px 25px rgba(168, 85, 247, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .entity-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .entity-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .entity-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+
+    .tag-main { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
+    .tag-child { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+    .tag-lock { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      font-size: 0.875rem;
+    }
+
+    .field-name {
+      font-family: 'Fira Code', monospace;
+      color: #cbd5e1;
+    }
+
+    .field-type {
+      font-size: 0.75rem;
+      color: #64748b;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.25rem;
+    }
+
+    /* State Matrix Visualizer */
+    .slot-state-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .state-badge {
+      border-radius: 1rem;
+      padding: 1.25rem;
+      text-align: center;
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .state-available {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .state-locked {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+    }
+
+    .state-booked {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    .state-icon {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 0.5rem;
+    }
+
+    /* Wireframe UI Previews */
+    .wireframe-box {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .mock-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.85rem;
+    }
+
+    .mock-btn {
+      padding: 0.35rem 0.85rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent-indigo), var(--accent-purple));
+      color: #fff;
+    }
+
+    /* Timeline Roadmap Visual */
+    .timeline {
+      position: relative;
+      padding-left: 2.5rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--accent-emerald) 0%, var(--accent-indigo) 50%, rgba(255, 255, 255, 0.1) 100%);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .timeline-marker {
+      position: absolute;
+      left: -2.5rem;
+      top: 0.25rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-main);
+      border: 3px solid var(--accent-indigo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .timeline-item.done .timeline-marker {
+      border-color: var(--accent-emerald);
+      background: var(--accent-emerald);
+    }
+
+    .timeline-item.active .timeline-marker {
+      border-color: var(--accent-amber);
+      background: var(--accent-amber);
+      box-shadow: 0 0 15px var(--accent-amber);
+    }
+
+    /* Mermaid container styling */
+    .mermaid-wrapper {
+      background: rgba(11, 17, 32, 0.95);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow-x: auto;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.875rem;
+      margin-top: 5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Hero Visualization Header -->
+    <header class="hero">
+      <div class="hero-badge">
+        <i data-lucide="sparkles"></i> One-Page Visual Architecture Canvas
+      </div>
+      <h1>Avenza Bookings <span class="gradient-text">Visual Blueprint</span></h1>
+      <p>Interactive single-page visual blueprint of DocTypes, APIs, Slot Concurrency Locking Engine, Frappe UI SPA Routes, and Delivery Roadmap.</p>
+    </header>
+
+    <!-- Metrics Bar -->
+    <div class="metrics-bar">
+      <div class="metric-card">
+        <div class="metric-val" style="color: #a5b4fc;">6</div>
+        <div class="metric-lbl">Frappe DocTypes</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" style="color: #c084fc;">7</div>
+        <div class="metric-lbl">REST APIs</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" style="color: #38bdf8;">15m</div>
+        <div class="metric-lbl">Slot Lock Expiry</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" style="color: #34d399;">5</div>
+        <div class="metric-lbl">SPA Client Routes</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" style="color: #fbbf24;">6</div>
+        <div class="metric-lbl">Delivery Phases</div>
+      </div>
+    </div>
+
+    <!-- CANVAS 1: SYSTEM ARCHITECTURE & DATA FLOW -->
+    <section class="canvas-section">
+      <div class="section-title">
+        <i data-lucide="network"></i>
+        <h2>1. System Architecture & Component Flow</h2>
+        <span>End-to-End Visual Map</span>
+      </div>
+
+      <div class="glass-box">
+        <div class="mermaid-wrapper">
+          <pre class="mermaid">
+          graph LR
+              subgraph Client["📱 Frontend (Frappe UI Vue 3 SPA)"]
+                  M["/ — Marketplace"]
+                  V["/v/:slug — Slot Selector"]
+                  C["/checkout — Lock & Pay"]
+                  I["/b/:token — Guest Invite"]
+                  H["/host/* — Host Studio"]
+              end
+
+              subgraph Backend["⚡ Backend Services (Frappe REST APIs)"]
+                  API_V["avenza_bookings.api.venue\nget_available_slots"]
+                  API_L["avenza_bookings.api.booking\nlock_slot"]
+                  API_P["avenza_bookings.api.booking\nprocess_mock_payment"]
+                  API_I["avenza_bookings.api.booking\nget_booking_invite"]
+              end
+
+              subgraph Store["💾 Database & Concurrency Layer"]
+                  DB[(MariaDB / PostgreSQL\nDocTypes)]
+                  REDIS[(Redis Lock Store\nScheduler Hooks)]
+              end
+
+              M & V -->|useCall / REST| API_V
+              C -->|Atomic Lock| API_L
+              C -->|Payment Gateway Callback| API_P
+              I -->|Fetch Invite Details| API_I
+
+              API_V & API_L & API_P & API_I -->|ORM frappe.db| DB
+              API_L -->|Expire in 15m| REDIS
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CANVAS 2: DOCTYPE ENTITY MAP (VISUAL CARDS) -->
+    <section class="canvas-section">
+      <div class="section-title">
+        <i data-lucide="database"></i>
+        <h2>2. DocType Data Model & Relationships</h2>
+        <span>Data Schema Blueprint</span>
+      </div>
+
+      <div class="grid-3">
+        <!-- Venue -->
+        <div class="entity-card">
+          <div class="entity-header">
+            <div class="entity-title">
+              <i data-lucide="building-2" style="color: #818cf8;"></i> Venue
+            </div>
+            <span class="entity-tag tag-main">Main DocType</span>
+          </div>
+          <div class="field-row"><span class="field-name">title</span><span class="field-type">Data</span></div>
+          <div class="field-row"><span class="field-name">slug [UK]</span><span class="field-type">Data</span></div>
+          <div class="field-row"><span class="field-name">owner_user [FK]</span><span class="field-type">Link (User)</span></div>
+          <div class="field-row"><span class="field-name">opening_time</span><span class="field-type">Time</span></div>
+          <div class="field-row"><span class="field-name">closing_time</span><span class="field-type">Time</span></div>
+          <div class="field-row"><span class="field-name">slot_duration_mins</span><span class="field-type">Select (60m)</span></div>
+          <div class="field-row"><span class="field-name">base_price_per_slot</span><span class="field-type">Currency</span></div>
+        </div>
+
+        <!-- Venue Booking -->
+        <div class="entity-card">
+          <div class="entity-header">
+            <div class="entity-title">
+              <i data-lucide="check-circle-2" style="color: #34d399;"></i> Venue Booking
+            </div>
+            <span class="entity-tag tag-main">Main DocType</span>
+          </div>
+          <div class="field-row"><span class="field-name">venue [FK]</span><span class="field-type">Link (Venue)</span></div>
+          <div class="field-row"><span class="field-name">customer_name</span><span class="field-type">Data</span></div>
+          <div class="field-row"><span class="field-name">booking_date</span><span class="field-type">Date</span></div>
+          <div class="field-row"><span class="field-name">start_time / end_time</span><span class="field-type">Time</span></div>
+          <div class="field-row"><span class="field-name">total_amount</span><span class="field-type">Currency</span></div>
+          <div class="field-row"><span class="field-name">payment_status</span><span class="field-type">Select (PAID)</span></div>
+          <div class="field-row"><span class="field-name">invite_token [UK]</span><span class="field-type">Data</span></div>
+        </div>
+
+        <!-- Venue Slot Lock -->
+        <div class="entity-card">
+          <div class="entity-header">
+            <div class="entity-title">
+              <i data-lucide="lock" style="color: #fbbf24;"></i> Venue Slot Lock
+            </div>
+            <span class="entity-tag tag-lock">Concurrency Lock</span>
+          </div>
+          <div class="field-row"><span class="field-name">venue [FK]</span><span class="field-type">Link (Venue)</span></div>
+          <div class="field-row"><span class="field-name">booking_date</span><span class="field-type">Date</span></div>
+          <div class="field-row"><span class="field-name">start_time / end_time</span><span class="field-type">Time</span></div>
+          <div class="field-row"><span class="field-name">locked_by_session</span><span class="field-type">Data Token</span></div>
+          <div class="field-row"><span class="field-name">expires_at</span><span class="field-type">Datetime (+15m)</span></div>
+          <div class="field-row"><span class="field-name">status</span><span class="field-type">ACTIVE / CONVERTED</span></div>
+        </div>
+
+        <!-- Venue Pricing Rule -->
+        <div class="entity-card">
+          <div class="entity-header">
+            <div class="entity-title">
+              <i data-lucide="trending-up" style="color: #c084fc;"></i> Venue Pricing Rule
+            </div>
+            <span class="entity-tag tag-child">Child Table</span>
+          </div>
+          <div class="field-row"><span class="field-name">rule_name</span><span class="field-type">Data</span></div>
+          <div class="field-row"><span class="field-name">apply_on</span><span class="field-type">Day/Peak/Date</span></div>
+          <div class="field-row"><span class="field-name">days_of_week</span><span class="field-type">Sat, Sun</span></div>
+          <div class="field-row"><span class="field-name">adjustment_type</span><span class="field-type">% / Fixed / Flat</span></div>
+          <div class="field-row"><span class="field-name">value</span><span class="field-type">Float (+20%)</span></div>
+        </div>
+
+        <!-- Venue Blackout Date -->
+        <div class="entity-card">
+          <div class="entity-header">
+            <div class="entity-title">
+              <i data-lucide="calendar-x" style="color: #f472b6;"></i> Venue Blackout Date
+            </div>
+            <span class="entity-tag tag-child">Child Table</span>
+          </div>
+          <div class="field-row"><span class="field-name">title</span><span class="field-type">Data</span></div>
+          <div class="field-row"><span class="field-name">start_date / end_date</span><span class="field-type">Date</span></div>
+          <div class="field-row"><span class="field-name">full_day</span><span class="field-type">Check (1)</span></div>
+        </div>
+
+        <!-- Booking Guest RSVP -->
+        <div class="entity-card">
+          <div class="entity-header">
+            <div class="entity-title">
+              <i data-lucide="users" style="color: #38bdf8;"></i> Booking Guest RSVP
+            </div>
+            <span class="entity-tag tag-child">Child Table</span>
+          </div>
+          <div class="field-row"><span class="field-name">guest_name</span><span class="field-type">Data</span></div>
+          <div class="field-row"><span class="field-name">guest_email</span><span class="field-type">Data</span></div>
+          <div class="field-row"><span class="field-name">status</span><span class="field-type">GOING / MAYBE / NO</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CANVAS 3: CONCURRENCY & SLOT LOCKING MACHINE -->
+    <section class="canvas-section">
+      <div class="section-title">
+        <i data-lucide="cpu"></i>
+        <h2>3. Slot Concurrency & Pricing Matrix Engine</h2>
+        <span>Real-Time State Machine</span>
+      </div>
+
+      <div class="glass-box">
+        <div class="slot-state-grid">
+          <div class="state-badge state-available">
+            <i data-lucide="check-circle" class="state-icon"></i>
+            <h4 style="font-weight: 700; margin-bottom: 0.25rem;">🟢 AVAILABLE</h4>
+            <p style="font-size: 0.8rem; opacity: 0.9;">Open for booking. Dynamic price calculated.</p>
+          </div>
+
+          <div class="state-badge state-locked">
+            <i data-lucide="clock" class="state-icon"></i>
+            <h4 style="font-weight: 700; margin-bottom: 0.25rem;">🟡 LOCKED (15m)</h4>
+            <p style="font-size: 0.8rem; opacity: 0.9;">Held in checkout session. Timer running.</p>
+          </div>
+
+          <div class="state-badge state-booked">
+            <i data-lucide="slash" class="state-icon"></i>
+            <h4 style="font-weight: 700; margin-bottom: 0.25rem;">🔴 BOOKED</h4>
+            <p style="font-size: 0.8rem; opacity: 0.9;">Confirmed payment. Unavailable to others.</p>
+          </div>
+        </div>
+
+        <div class="mermaid-wrapper" style="margin-top: 1.5rem;">
+          <pre class="mermaid">
+          sequenceDiagram
+              participant Guest as Customer Browser
+              participant API as booking.lock_slot API
+              participant DB as MariaDB (FOR UPDATE)
+              participant Worker as Background Scheduler
+
+              Guest->>API: Click Slot (08:00 - 09:00)
+              API->>DB: SELECT * FROM VenueSlotLock WHERE slot OVERLAPS FOR UPDATE
+              alt Slot Available
+                  API->>DB: INSERT VenueSlotLock (expires_at = now() + 15m)
+                  API-->>Guest: Lock Acquired (200 OK + lock_id)
+                  Guest->>Guest: Start 15:00 Countdown Timer
+              else Slot Locked by Other Session
+                  API-->>Guest: Error 409: Slot locked by another user
+              end
+
+              opt Payment Success
+                  Guest->>API: process_mock_payment(lock_id, payment_token)
+                  API->>DB: INSERT VenueBooking (PAID) & UPDATE Lock status=CONVERTED
+                  API-->>Guest: Redirect to /b/:invite_token
+              end
+
+              opt Abandoned Checkout
+                  Worker->>DB: Every 5m: UPDATE VenueSlotLock SET status=EXPIRED WHERE expires_at < now()
+              end
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CANVAS 4: FRAPPE UI SPA ROUTE BLUEPRINTS -->
+    <section class="canvas-section">
+      <div class="section-title">
+        <i data-lucide="layout"></i>
+        <h2>4. Frappe UI Vue 3 SPA Route Wireframes</h2>
+        <span>Client Visual Blueprint</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="wireframe-box">
+          <div class="mock-navbar">
+            <span style="font-weight: 800; color: #818cf8;">⚽ Avenza Bookings</span>
+            <span>Marketplace | My Bookings</span>
+            <span class="mock-btn">Host Studio</span>
+          </div>
+          <h4 style="margin-bottom: 0.5rem;">1. Venue Booking Page (<code class="code-badge">/v/green-field-turf</code>)</h4>
+          <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">Interactive slot grid with dynamic surge pricing tags and 15-minute checkout lock drawer.</p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <span style="padding: 0.4rem 0.75rem; background: rgba(16, 185, 129, 0.2); color: #34d399; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600;">08:00 AM — $50</span>
+            <span style="padding: 0.4rem 0.75rem; background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600;">09:00 AM — Locked ⏳</span>
+            <span style="padding: 0.4rem 0.75rem; background: rgba(239, 68, 68, 0.2); color: #f87171; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600;">10:00 AM — Booked</span>
+            <span style="padding: 0.4rem 0.75rem; background: rgba(16, 185, 129, 0.2); color: #34d399; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600;">06:00 PM — $70 (Peak)</span>
+          </div>
+        </div>
+
+        <div class="wireframe-box">
+          <div class="mock-navbar">
+            <span style="font-weight: 800; color: #38bdf8;">📅 Event Invitation</span>
+            <span class="mock-btn" style="background: var(--accent-emerald);">Add to Calendar (.ics)</span>
+          </div>
+          <h4 style="margin-bottom: 0.5rem;">2. Shareable Guest Invite Page (<code class="code-badge">/b/x892jkls92</code>)</h4>
+          <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">Public event page with venue map, rules, Google Calendar integration, and RSVP form.</p>
+          <div style="padding: 0.75rem; background: rgba(255, 255, 255, 0.03); border-radius: 0.5rem; font-size: 0.8rem;">
+            <strong>RSVP Status:</strong> 12 Going · 3 Maybe · 1 Declined
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CANVAS 5: PHASE-WISE ROADMAP -->
+    <section class="canvas-section">
+      <div class="section-title">
+        <i data-lucide="list-todo"></i>
+        <h2>5. Phase-Wise Implementation Roadmap</h2>
+        <span>Execution Pipeline</span>
+      </div>
+
+      <div class="glass-box">
+        <div class="timeline">
+          <div class="timeline-item done">
+            <div class="timeline-marker"><i data-lucide="check" style="width: 14px; height: 14px; color: #fff;"></i></div>
+            <h4 style="color: #34d399; font-weight: 700;">Phase 0: Specifications & Architecture Blueprint</h4>
+            <p style="color: var(--text-dim); font-size: 0.875rem;">Created 5 phase specification markdown files, resolved grilling decisions, and generated visual HTML blueprint.</p>
+          </div>
+
+          <div class="timeline-item active">
+            <div class="timeline-marker"></div>
+            <h4 style="color: #fbbf24; font-weight: 700;">Phase 1: Backend Data Modeling & DocTypes</h4>
+            <p style="color: var(--text-dim); font-size: 0.875rem;">Scaffold Frappe DocTypes (<code class="code-badge">Venue</code>, <code class="code-badge">Venue Booking</code>, <code class="code-badge">Venue Slot Lock</code>, etc.) and run <code class="code-badge">bench migrate</code>.</p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <h4 style="color: #94a3b8; font-weight: 700;">Phase 2: Core REST APIs & Concurrency Control</h4>
+            <p style="color: var(--text-dim); font-size: 0.875rem;">Write whitelisted APIs for slot calculation, dynamic pricing evaluation, and lock expiry scheduler.</p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <h4 style="color: #94a3b8; font-weight: 700;">Phase 3 & 4: Frappe UI Vue 3 App & Host Studio</h4>
+            <p style="color: var(--text-dim); font-size: 0.875rem;">Bootstrap Vite + Vue 3 inside <code class="code-badge">avenza_bookings/frontend</code>, build Host Dashboard and Pricing Builder.</p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <h4 style="color: #94a3b8; font-weight: 700;">Phase 5 & 6: Public Booking Flow, Invites & Verification</h4>
+            <p style="color: var(--text-dim); font-size: 0.875rem;">Implement checkout countdown timer, public invite pages (<code class="code-badge">/b/:token</code>), and multi-tab concurrency verification.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>Avenza Bookings &copy; 2026 — Multi-Tenant Venue Booking Platform Architecture Canvas</p>
+    </footer>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#0b1120',
+        primaryColor: '#6366f1',
+        secondaryColor: '#a855f7',
+        tertiaryColor: '#06b6d4',
+        fontFamily: 'Plus Jakarta Sans'
+      }
+    });
+  </script>
+</body>
+</html>
